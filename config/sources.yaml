@@ -1,0 +1,108 @@
+sources:
+  - name: Tech in Asia
+    url: https://www.techinasia.com/feed
+    region: APAC
+    region_boost: 0.25
+    default_category: startups
+
+  - name: IT News Australia
+    url: https://www.itnews.com.au/RSS/rss.ashx
+    region: APAC
+    countries: [AU]
+    tier: mvp
+    region_boost: 0.2
+    default_category: engineering
+    notes: "nextmedia AU edition; verified working"
+
+  - name: iTnews NZ
+    url: https://www.itnews.com.au/RSS/rss-nz.ashx
+    region: APAC
+    countries: [NZ]
+    tier: mvp
+    region_boost: 0.3
+    default_category: engineering
+    notes: "nextmedia NZ edition"
+
+  - name: Reseller News
+    url: https://www.reseller.co.nz/feed
+    region: APAC
+    countries: [NZ]
+    tier: mvp
+    region_boost: 0.30
+    default_category: startups
+    notes: "NZ channel; strong A/NZ partner coverage"
+
+  - name: BusinessDesk
+    url: https://businessdesk.co.nz/feed
+    region: APAC
+    countries: [NZ]
+    tier: mvp
+    region_boost: 0.25
+    default_category: startups
+    notes: "NZ business and startup raises"
+
+  - name: Computerworld NZ
+    url: https://www.computerworld.com/nz/feed
+    region: APAC
+    countries: [NZ]
+    tier: mvp
+    region_boost: 0.12
+    default_category: engineering
+    notes: "Enterprise IT; mixed global syndication"
+
+  - name: ARN
+    url: https://www.arnnet.com.au/feed
+    region: APAC
+    countries: [ANZ]
+    tier: mvp
+    region_boost: 0.25
+    default_category: startups
+    notes: "AU/NZ channel partners and AI"
+
+  - name: techpartner.news
+    url: https://www.techpartner.news/rss/rss.ashx
+    region: APAC
+    countries: [AU]
+    tier: mvp
+    region_boost: 0.20
+    default_category: engineering
+    notes: "AU MSP/channel; nextmedia family — monitor overlap"
+
+  - name: Startup Daily
+    url: https://startupdaily.net/feed
+    region: APAC
+    countries: [ANZ]
+    tier: mvp
+    region_boost: 0.28
+    default_category: startups
+    notes: "AU/NZ startup ecosystem"
+
+  - name: The Register APAC
+    url: https://www.theregister.com/headlines.atom
+    region: APAC
+    region_boost: 0.1
+    default_category: engineering
+
+  - name: KrASIA
+    url: https://kr-asia.com/feed
+    region: APAC
+    region_boost: 0.25
+    default_category: startups
+
+  - name: Rest of World
+    url: https://restofworld.org/feed/latest/
+    region: GLOBAL
+    region_boost: 0.05
+    default_category: misc
+
+  - name: Nikkei Asia Tech
+    url: https://asia.nikkei.com/rss/feed/technology
+    region: APAC
+    region_boost: 0.2
+    default_category: engineering
+
+  - name: Hacker News (filter APAC at score stage)
+    url: https://hnrss.org/frontpage
+    region: GLOBAL
+    region_boost: 0.0
+    default_category: engineering

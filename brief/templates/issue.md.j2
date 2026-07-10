@@ -1,0 +1,21 @@
+# Brief APAC — {{ issue.date }}
+
+{{ issue.intro }}
+
+**APAC relevance ratio:** {{ apac_ratio }}
+
+{% for story in issue.stories %}
+## {{ story.title }} ({{ story.read_time_minutes }} min read)
+
+**{{ categories.get(story.category, story.category) }}** · {{ story.source_name }} · APAC score {{ '%.2f'|format(story.apac_score) }}
+
+{{ story.summary }}
+
+*Why it matters:* {{ story.why_it_matters }}
+
+[Read more]({{ story.url }})
+
+{% endfor %}
+
+---
+*Brief APAC — curated technology stories for builders and operators across Asia-Pacific.*

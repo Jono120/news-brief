@@ -1,0 +1,75 @@
+/* Brief APAC design tokens — single source of truth for colour, type, and spacing.
+   Sync email/issue inline values in brief/templates/macros/design.html.j2 */
+
+:root {
+  color-scheme: light dark;
+
+  /* Colour */
+  --bg: #f4efe6;
+  --surface: #fffdf9;
+  --ink: #1c1917;
+  --muted: #57534e;
+  --accent: #0b5b49;
+  --accent-hover: #084636;
+  --accent-soft: #d9ebe4;
+  --line: #d9d0c3;
+  --focus: #005fcc;
+  --success: #1f6b3a;
+  --success-soft: #d9ebe4;
+  --danger: #8b1e1e;
+  --danger-soft: #f5e0e0;
+  --neutral: #334155;
+  --sample: #9a3412;
+  --sample-soft: #fde8d8;
+  --on-accent: #ffffff;
+
+  /* Typography */
+  --font-body: "Atkinson Hyperlegible", "Trebuchet MS", "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "Cascadia Code", "Segoe UI Mono", monospace;
+  --font-size-base: 1.0625rem;
+  --font-size-meta: 0.9375rem;
+  --font-size-small: 0.875rem;
+  --font-size-badge: 0.75rem;
+  --line-height: 1.7;
+  --line-height-tight: 1.35;
+
+  /* Layout */
+  --max-width-site: 72rem;
+  --max-width-editor: 57.5rem;
+  --max-width-email: 37.5rem;
+  --shadow: 0 10px 30px rgba(28, 25, 23, 0.06);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --touch-target: 2.75rem;
+
+  /* Spacing */
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141210;
+    --surface: #1f1c19;
+    --ink: #f5f2eb;
+    --muted: #b8b0a6;
+    --accent: #5fd0b0;
+    --accent-hover: #8fe0c8;
+    --accent-soft: #1f3b33;
+    --line: #3a342d;
+    --focus: #7cb8ff;
+    --success: #5fd0b0;
+    --success-soft: #1f3b33;
+    --danger: #f5a8a8;
+    --danger-soft: #3b1f1f;
+    --neutral: #94a3b8;
+    --sample: #f5a882;
+    --sample-soft: #3b2418;
+    --on-accent: #141210;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  }
+}

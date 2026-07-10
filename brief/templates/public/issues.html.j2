@@ -1,0 +1,43 @@
+{% extends "base.html.j2" %}
+
+{% block title %}Archive — {{ site.title }}{% endblock %}
+{% block description %}Browse published Brief APAC issues and the sample preview briefing.{% endblock %}
+
+{% block content %}
+<section class="panel stack" aria-labelledby="archive-heading">
+  <header class="stack">
+    <h1 id="archive-heading" class="h1">Issue archive</h1>
+    <p class="meta">Published briefings and the sample preview issue.</p>
+  </header>
+
+  {% if issues %}
+  <div role="list" aria-label="All issues">
+    {% for item in issues %}
+    <article class="issue-row" role="listitem" aria-labelledby="issue-{{ loop.index }}-title">
+      <div class="stack">
+        {% if item.is_sample %}
+        <p><span class="badge badge-sample">Sample</span></p>
+        <h2 id="issue-{{ loop.index }}-title" class="h2">Preview issue</h2>
+        <p class="meta">Placeholder stories showing the intended format</p>
+        {% else %}
+        <p><span class="badge badge-live">Published</span></p>
+        <h2 id="issue-{{ loop.index }}-title" class="h2">{{ item.date }}</h2>
+        <ul class="meta-list" aria-label="Issue details">
+          <li>{{ item.story_count }} stories</li>
+          <li>APAC relevance {{ '%.0f'|format(item.apac_ratio * 100) }}%</li>
+        </ul>
+        {% endif %}
+      </div>
+      <div class="actions">
+        <a class="button button-secondary" href="/issues/{{ item.date }}" aria-label="Read {% if item.is_sample %}sample preview{% else %}issue {{ item.date }}{% endif %}">
+          Read issue
+        </a>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p>No issues published yet. <a href="/issues/sample">View the sample preview</a>.</p>
+  {% endif %}
+</section>
+{% endblock %}

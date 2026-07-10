@@ -1,0 +1,90 @@
+{
+  "date": "sample",
+  "edition_slug": "apac-tech",
+  "title": "sample",
+  "intro": "Sample briefing — placeholder stories showing what Brief APAC will look like once the daily pipeline is live. Spelling follows New Zealand English.",
+  "apac_ratio": 1.0,
+  "is_sample": true,
+  "stories": [
+    {
+      "title": "New Zealand drafts cross-border data rules for AI training",
+      "url": "https://example.com/nz-ai-data-rules",
+      "source_name": "Policy Desk (sample)",
+      "category": "policy",
+      "summary": "Regulators are consulting on when APAC customer data can leave national borders for model training. The proposal would require explicit purpose limits and easier withdrawal for SMEs.",
+      "why_it_matters": "Teams shipping AI features to NZ users will need clearer data-flow documentation before enterprise procurement cycles close.",
+      "read_time_minutes": 4,
+      "apac_score": 0.96
+    },
+    {
+      "title": "Singapore expands fintech sandbox to cover agentic payments",
+      "url": "https://example.com/sg-fintech-sandbox",
+      "source_name": "Tech in Asia (sample)",
+      "category": "fintech",
+      "summary": "MAS opened a new sandbox track for autonomous payment agents that route across wallets and bank rails. Early applicants include remittance startups from Indonesia and the Philippines.",
+      "why_it_matters": "Singapore often sets the compliance template other ASEAN markets copy within 12–18 months.",
+      "read_time_minutes": 3,
+      "apac_score": 0.94
+    },
+    {
+      "title": "India's UPI hits new daily transaction record ahead of festival season",
+      "url": "https://example.com/india-upi-record",
+      "source_name": "KrASIA (sample)",
+      "category": "fintech",
+      "summary": "Real-time retail payments crossed a new peak as merchants rolled out QR-led checkout upgrades. Banks report lower failure rates after a shared fraud signal layer went live.",
+      "why_it_matters": "UPI-scale payment patterns are the benchmark for instant-settlement products across emerging APAC markets.",
+      "read_time_minutes": 2,
+      "apac_score": 0.92
+    },
+    {
+      "title": "Australian states align on data-centre renewable reporting",
+      "url": "https://example.com/au-dc-energy",
+      "source_name": "iTnews Australia (sample)",
+      "category": "engineering",
+      "summary": "A joint framework would require hyperscale and colocation operators to publish location-level energy mix and water usage from 2027. Cloud buyers are already adding the metrics to RFPs.",
+      "why_it_matters": "Infrastructure siting decisions in APAC are increasingly constrained by grid capacity, not just land and latency.",
+      "read_time_minutes": 5,
+      "apac_score": 0.91
+    },
+    {
+      "title": "Japan commits funding package for advanced packaging facilities",
+      "url": "https://example.com/jp-semiconductor-packaging",
+      "source_name": "Nikkei Asia (sample)",
+      "category": "engineering",
+      "summary": "The package targets substrate and packaging capacity to reduce export dependence for AI accelerators. Several suppliers plan joint ventures with Korean and Taiwanese partners.",
+      "why_it_matters": "Compute supply shocks in APAC often show up in packaging bottlenecks before wafer shortages.",
+      "read_time_minutes": 4,
+      "apac_score": 0.89
+    },
+    {
+      "title": "SEA venture funding rebounds in B2B SaaS and climate software",
+      "url": "https://example.com/sea-b2b-funding",
+      "source_name": "Tech in Asia (sample)",
+      "category": "startups",
+      "summary": "Q2 filings show renewed appetite for vertical SaaS in logistics, fisheries, and grid operations. Follow-on rounds outpaced new seed deals for the first time since 2023.",
+      "why_it_matters": "APAC founders are raising on revenue efficiency, not growth-at-all-costs narratives borrowed from US pitch decks.",
+      "read_time_minutes": 6,
+      "apac_score": 0.88
+    },
+    {
+      "title": "CERT teams warn of MFA bypass campaigns targeting regional banks",
+      "url": "https://example.com/apac-mfa-bypass",
+      "source_name": "The Register APAC (sample)",
+      "category": "security",
+      "summary": "A coordinated campaign exploited helpdesk workflows and session-token reuse across three countries. Banks are being urged to enforce phishing-resistant MFA for privileged accounts.",
+      "why_it_matters": "Financial services incidents in one APAC market frequently reuse playbooks tested in neighbouring countries weeks earlier.",
+      "read_time_minutes": 3,
+      "apac_score": 0.87
+    },
+    {
+      "title": "New Zealand government publishes open-source adoption playbook",
+      "url": "https://example.com/nz-gov-oss-playbook",
+      "source_name": "iTnews NZ (sample)",
+      "category": "policy",
+      "summary": "Agencies received guidance on evaluating OSS for identity, observability, and document services with explicit security exception paths. Two pilot departments will publish their stack choices openly.",
+      "why_it_matters": "Public-sector adoption patterns in Aotearoa New Zealand and Australia often influence procurement norms for regional SaaS vendors.",
+      "read_time_minutes": 4,
+      "apac_score": 0.95
+    }
+  ]
+}

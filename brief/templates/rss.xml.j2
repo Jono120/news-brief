@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>{{ edition.name }}</title>
+    <link>https://brief-apac.local/{{ edition.slug }}</link>
+    <description>{{ edition.tagline }}</description>
+    <language>en</language>
+    <lastBuildDate>{{ issue.date }}</lastBuildDate>
+    <item>
+      <title>{{ issue.title }}</title>
+      <link>https://brief-apac.local/{{ edition.slug }}/{{ issue.date }}</link>
+      <guid isPermaLink="false">{{ edition.slug }}-{{ issue.date }}</guid>
+      <pubDate>{{ issue.date }}</pubDate>
+      <description><![CDATA[
+        <p>{{ issue.intro }}</p>
+        {% for story in issue.stories %}
+        <p><strong><a href="{{ story.url }}">{{ story.title }}</a></strong><br/>
+        {{ story.summary }}<br/>
+        <em>Why it matters: {{ story.why_it_matters }}</em></p>
+        {% endfor %}
+      ]]></description>
+    </item>
+  </channel>
+</rss>

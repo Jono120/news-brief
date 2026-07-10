@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>{{ site.title }}</title>
+    <link>{{ base_url }}/</link>
+    <description>{{ site.description }}</description>
+    <language>en</language>
+    {% for issue in issues %}
+    <item>
+      <title>{% if issue.is_sample %}Sample issue{% else %}{{ issue.date }}{% endif %}</title>
+      <link>{{ base_url }}/issues/{{ issue.date }}</link>
+      <guid isPermaLink="true">{{ base_url }}/issues/{{ issue.date }}</guid>
+      <description><![CDATA[{{ issue.intro }}]]></description>
+    </item>
+    {% endfor %}
+  </channel>
+</rss>

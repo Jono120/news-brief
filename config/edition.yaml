@@ -1,0 +1,87 @@
+edition:
+  slug: apac-tech
+  name: "Brief APAC"
+  tagline: "Keep up with APAC tech in 5 minutes"
+  region: APAC
+  send_time_local: "07:30"
+  timezone: "Pacific/Auckland"
+  stories_per_issue: 8
+  min_apac_score: 0.35
+  min_apac_story_ratio: 0.4
+
+scoring:
+  apac_keywords:
+    - australia
+    - australian
+    - new zealand
+    - aotearoa
+    - auckland
+    - wellington
+    - sydney
+    - melbourne
+    - singapore
+    - indonesia
+    - jakarta
+    - malaysia
+    - kuala lumpur
+    - philippines
+    - manila
+    - thailand
+    - bangkok
+    - vietnam
+    - hanoi
+    - ho chi minh
+    - india
+    - bangalore
+    - bengaluru
+    - mumbai
+    - delhi
+    - hyderabad
+    - japan
+    - tokyo
+    - osaka
+    - south korea
+    - seoul
+    - taiwan
+    - taipei
+    - hong kong
+    - china
+    - shanghai
+    - beijing
+    - shenzhen
+    - apac
+    - asia pacific
+    - southeast asia
+    - asean
+    - oceania
+    - pacific
+    - nz
+    - au
+    - sg
+    - id
+    - my
+    - ph
+    - th
+    - vn
+    - in
+    - jp
+    - kr
+    - tw
+    - hk
+    - cn
+
+categories:
+  - slug: startups
+    label: "Startups"
+  - slug: policy
+    label: "Policy & Regulation"
+  - slug: engineering
+    label: "Engineering"
+  - slug: security
+    label: "Security"
+  - slug: ai
+    label: "AI & ML"
+  - slug: fintech
+    label: "Fintech"
+  - slug: misc
+    label: "Misc"

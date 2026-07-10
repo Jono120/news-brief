@@ -1,0 +1,36 @@
+{% from "macros/design.html.j2" import font_stack, font_url, color_bg, color_surface, color_ink, color_muted, color_accent, color_line, font_size_base, font_size_meta, font_size_h1, font_size_h2, line_height, line_height_tight, radius %}
+<!doctype html>
+<html lang="en-NZ">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>{{ issue.title }}</title>
+  <link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
+  <link rel="stylesheet" href="{{ font_url }}" />
+</head>
+<body style="margin:0;padding:0;background:{{ color_bg }};font-family:{{ font_stack }};color:{{ color_ink }};font-size:{{ font_size_base }};line-height:{{ line_height }};-webkit-text-size-adjust:100%;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:{{ color_bg }};padding:24px 0;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="max-width:600px;width:100%;background:{{ color_surface }};border:1px solid {{ color_line }};border-radius:{{ radius }};padding:24px;">
+          <tr><td style="font-family:{{ font_stack }};font-size:{{ font_size_meta }};color:{{ color_muted }};line-height:{{ line_height }};">{{ edition.name }} · {{ issue.date }}</td></tr>
+          <tr><td style="font-family:{{ font_stack }};font-size:{{ font_size_h1 }};font-weight:800;line-height:{{ line_height_tight }};padding:8px 0 12px;color:{{ color_ink }};">{{ edition.tagline }}</td></tr>
+          <tr><td style="font-size:{{ font_size_base }};line-height:{{ line_height }};padding-bottom:16px;color:{{ color_ink }};">{{ issue.intro }}</td></tr>
+          {% for story in issue.stories %}
+          <tr><td style="border-top:1px solid {{ color_line }};padding-top:16px;">
+            <div style="font-family:{{ font_stack }};font-size:{{ font_size_meta }};color:{{ color_muted }};line-height:{{ line_height }};">{{ categories.get(story.category, story.category) }} · {{ story.source_name }} · {{ story.read_time_minutes }} min read</div>
+            <div style="font-family:{{ font_stack }};font-size:{{ font_size_h2 }};font-weight:700;line-height:{{ line_height_tight }};padding:6px 0;">
+              <a href="{{ story.url }}" style="color:{{ color_accent }};text-decoration:underline;text-underline-offset:3px;">{{ story.title }}</a>
+            </div>
+            <div style="font-size:{{ font_size_base }};line-height:{{ line_height }};color:{{ color_ink }};">{{ story.summary }}</div>
+            <div style="font-size:{{ font_size_meta }};line-height:{{ line_height }};color:{{ color_muted }};font-style:italic;padding-top:6px;">Why it matters: {{ story.why_it_matters }}</div>
+          </td></tr>
+          {% endfor %}
+          <tr><td style="font-family:{{ font_stack }};font-size:{{ font_size_meta }};color:{{ color_muted }};line-height:{{ line_height }};padding-top:20px;">Brief APAC — curated technology stories for builders and operators across Asia-Pacific.</td></tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

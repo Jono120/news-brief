@@ -1,0 +1,4 @@
+-r requirements.txt
+
+# Dev / test tooling
+httpx2==2.5.0

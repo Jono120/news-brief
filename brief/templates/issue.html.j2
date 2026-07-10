@@ -1,0 +1,77 @@
+{% from "macros/design.html.j2" import font_stack, font_url, color_bg, color_ink, color_muted, color_accent, color_line, color_accent_soft, font_size_base, font_size_meta, line_height, line_height_tight, radius, radius_sm %}
+<!doctype html>
+<html lang="en-NZ">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>{{ issue.title }}</title>
+  <link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
+  <link rel="stylesheet" href="{{ font_url }}" />
+  <style>
+    :root {
+      --bg: {{ color_bg }};
+      --ink: {{ color_ink }};
+      --muted: {{ color_muted }};
+      --accent: {{ color_accent }};
+      --line: {{ color_line }};
+      --accent-soft: {{ color_accent_soft }};
+    }
+    body {
+      font-family: {{ font_stack }};
+      max-width: 45rem;
+      margin: 0 auto;
+      padding: 24px;
+      color: var(--ink);
+      background: var(--bg);
+      font-size: {{ font_size_base }};
+      line-height: {{ line_height }};
+      text-rendering: optimizeLegibility;
+    }
+    h1, h2 {
+      font-family: {{ font_stack }};
+      line-height: {{ line_height_tight }};
+      font-weight: 700;
+    }
+    h1 { font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 800; }
+    h2 { font-size: {{ font_size_meta }}; margin-top: 0; }
+    .meta { color: var(--muted); font-size: {{ font_size_meta }}; }
+    .story { border-top: 1px solid var(--line); padding-top: 18px; margin-top: 18px; }
+    .why { color: var(--muted); font-style: italic; margin-top: 8px; }
+    .badge {
+      display: inline-block;
+      background: var(--accent-soft);
+      color: var(--accent);
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    a { color: var(--accent); text-underline-offset: 3px; }
+    a:focus-visible { outline: 3px solid #005fcc; outline-offset: 2px; }
+  </style>
+</head>
+<body>
+  <header>
+    <p class="meta">{{ edition.name }} · {{ issue.date }}</p>
+    <h1>{{ edition.tagline }}</h1>
+    <p>{{ issue.intro }}</p>
+    <p class="meta">APAC relevance ratio: <span class="badge">{{ apac_ratio }}</span></p>
+  </header>
+
+  {% for story in issue.stories %}
+  <article class="story">
+    <p class="meta">{{ categories.get(story.category, story.category) }} · {{ story.source_name }} · {{ story.read_time_minutes }} min read</p>
+    <h2><a href="{{ story.url }}">{{ story.title }}</a></h2>
+    <p>{{ story.summary }}</p>
+    <p class="why">Why it matters: {{ story.why_it_matters }}</p>
+  </article>
+  {% endfor %}
+
+  <footer>
+    <p class="meta">Brief APAC — curated technology stories for builders and operators across Asia-Pacific.</p>
+  </footer>
+</body>
+</html>

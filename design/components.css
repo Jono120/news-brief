@@ -1,0 +1,230 @@
+/* Brief APAC shared components — used by public site and review UI */
+
+.stack {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.stack-lg {
+  display: grid;
+  gap: var(--space-lg);
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: var(--space-lg);
+}
+
+@media (min-width: 48rem) {
+  .panel {
+    padding: var(--space-xl);
+  }
+}
+
+.panel-error {
+  border-color: var(--danger);
+}
+
+.meta-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs) var(--space-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.meta-list li {
+  display: inline-flex;
+  align-items: center;
+}
+
+.meta-list li + li::before {
+  content: "·";
+  margin-right: var(--space-sm);
+  color: var(--muted);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.75rem;
+  padding: 0 var(--space-sm);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: var(--font-size-badge);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.badge-live,
+.badge-score {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.badge-sample {
+  background: var(--sample-soft);
+  color: var(--sample);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  min-height: var(--touch-target);
+  padding: 0 var(--space-md);
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  font-family: var(--font-body);
+  font-size: var(--font-size-meta);
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button-primary {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.button-primary:hover {
+  background: var(--accent-hover);
+  color: var(--on-accent);
+}
+
+.button-secondary {
+  background: transparent;
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.button-secondary:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.button-success {
+  background: var(--success);
+  color: var(--on-accent);
+}
+
+.button-danger {
+  background: var(--danger);
+  color: var(--on-accent);
+}
+
+.button-neutral {
+  background: var(--neutral);
+  color: var(--on-accent);
+}
+
+.button[disabled],
+.button.is-disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.field {
+  display: grid;
+  gap: var(--space-xs);
+  font-family: var(--font-body);
+  font-size: var(--font-size-meta);
+  font-weight: 600;
+}
+
+.field input,
+.field textarea,
+.field select {
+  width: 100%;
+  min-height: var(--touch-target);
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  line-height: var(--line-height);
+}
+
+.field textarea {
+  min-height: 6rem;
+  resize: vertical;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: var(--space-sm);
+}
+
+.stat {
+  background: var(--accent-soft);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  display: grid;
+  gap: var(--space-xs);
+}
+
+.stat strong {
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  line-height: var(--line-height-tight);
+}
+
+.story-cards {
+  display: grid;
+  gap: var(--space-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.story-card {
+  padding: var(--space-md);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+}
+
+.story-card h3 {
+  margin-top: var(--space-xs);
+}
+
+.story-card h3 a {
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.story-card h3 a:hover {
+  color: var(--accent);
+}
+
+.why {
+  margin: var(--space-sm) 0 0;
+  color: var(--muted);
+  font-style: italic;
+}
+
+@media (forced-colors: active) {
+  .panel,
+  .button,
+  .badge,
+  .story-card {
+    border: 1px solid CanvasText;
+  }
+}

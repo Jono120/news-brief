@@ -1,0 +1,19 @@
+{
+  "name": "brief-apac-web",
+  "private": true,
+  "workspaces": [
+    "review",
+    "public"
+  ],
+  "scripts": {
+    "dev": "npm run dev:review & npm run dev:public",
+    "dev:review": "npm run dev -w @brief-apac/review",
+    "dev:public": "npm run dev -w @brief-apac/public",
+    "dev:clean": "npm run dev:clean -w @brief-apac/public",
+    "build": "npm run build -w @brief-apac/review && npm run build -w @brief-apac/public",
+    "install:all": "npm install"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

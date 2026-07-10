@@ -1,0 +1,93 @@
+{% extends "base.html.j2" %}
+
+{% block title %}{% if issue.is_sample %}Sample issue{% else %}{{ issue.date }}{% endif %} — {{ site.title }}{% endblock %}
+{% block description %}{{ issue.intro }}{% endblock %}
+
+{% block content %}
+<header class="panel stack issue-header">
+  {% if issue.is_sample %}
+  <p><span class="badge badge-sample">Sample issue — placeholder content</span></p>
+  {% else %}
+  <p><span class="badge badge-live">Published</span></p>
+  {% endif %}
+
+  <h1 class="h1">
+    {% if issue.is_sample %}What Brief APAC looks like{% else %}{{ edition.tagline }}{% endif %}
+  </h1>
+
+  <ul class="meta-list" aria-label="Issue details">
+    <li>{% if issue.is_sample %}Preview{% else %}{{ issue.date }}{% endif %}</li>
+    <li>{{ issue.story_count }} stories</li>
+    <li>APAC relevance {{ '%.0f'|format(issue.apac_ratio * 100) }}%</li>
+  </ul>
+
+  <p>{{ issue.intro }}</p>
+</header>
+
+<div class="grid grid-sidebar">
+  <section class="panel" aria-labelledby="stories-heading">
+    <h2 id="stories-heading" class="sr-only">Stories in this issue</h2>
+    <ol class="story-list">
+      {% for story in issue.stories %}
+      <li class="story">
+        <article aria-labelledby="issue-story-{{ loop.index }}-title">
+          <ul class="meta-list" aria-label="Story details">
+            <li>{{ categories.get(story.category, story.category) }}</li>
+            <li>{{ story.source_name }}</li>
+            <li>{{ story.read_time_minutes }} min read</li>
+          </ul>
+
+          <h3 id="issue-story-{{ loop.index }}-title" class="h2">
+            {% if issue.is_sample %}
+            {{ story.title }}
+            {% else %}
+            <a href="{{ story.url }}" class="external-link" rel="noopener noreferrer">
+              {{ story.title }}
+              <span class="sr-only">(opens in new tab)</span>
+            </a>
+            {% endif %}
+          </h3>
+
+          <p>{{ story.summary }}</p>
+          <p class="why"><strong>Why it matters:</strong> {{ story.why_it_matters }}</p>
+
+          {% if not issue.is_sample %}
+          <p>
+            <a href="{{ story.url }}" class="external-link" rel="noopener noreferrer">
+              Read original article
+              <span class="sr-only">(opens in new tab)</span>
+            </a>
+          </p>
+          {% endif %}
+        </article>
+      </li>
+      {% endfor %}
+    </ol>
+  </section>
+
+  <aside class="stack" aria-label="Issue navigation">
+    <section class="panel">
+      <h2 class="h2">More issues</h2>
+      <nav aria-label="Issue archive">
+        <ul class="sidebar-list">
+          {% for item in all_issues %}
+          <li>
+            <a href="/issues/{{ item.date }}"{% if item.date == issue.date %} aria-current="page"{% endif %}>
+              {% if item.is_sample %}Sample preview{% else %}{{ item.date }}{% endif %}
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+      </nav>
+    </section>
+
+    {% if issue.is_sample %}
+    <section class="panel notice" role="note" aria-label="Sample content notice">
+      <p class="meta">
+        These are placeholder stories for design and workflow testing. Real issues will link to source articles once publishing begins.
+      </p>
+    </section>
+    {% endif %}
+  </aside>
+</div>
+{% endblock %}

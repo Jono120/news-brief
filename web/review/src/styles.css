@@ -1,0 +1,35 @@
+@import "../../../design/tokens.css";
+@import "../../../design/foundation.css";
+@import "../../../design/components.css";
+
+/* Review app shell */
+.app-header {
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.brand {
+  font-family: var(--font-body);
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  font-weight: 800;
+  color: var(--ink);
+  text-decoration: none;
+  line-height: var(--line-height-tight);
+}
+
+.brand:hover {
+  color: var(--accent);
+}
+
+.app-main {
+  max-width: var(--max-width-editor);
+  margin: 0 auto;
+  padding: var(--space-lg);
+}
+
+@media (min-width: 48rem) {
+  .app-main {
+    padding: var(--space-xl);
+  }
+}

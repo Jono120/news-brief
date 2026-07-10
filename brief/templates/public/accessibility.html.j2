@@ -1,0 +1,55 @@
+{% extends "base.html.j2" %}
+
+{% block title %}Accessibility — {{ site.title }}{% endblock %}
+{% block description %}How Brief APAC supports accessible reading across devices and assistive technologies.{% endblock %}
+
+{% block content %}
+<section class="panel stack prose" aria-labelledby="accessibility-heading">
+  <header class="stack">
+    <h1 id="accessibility-heading" class="h1">Accessibility</h1>
+    <p>
+      Brief APAC is designed to be readable on phones, tablets, and desktops, and to work well with
+      assistive technologies such as screen readers, screen magnifiers, and keyboard-only navigation.
+    </p>
+  </header>
+
+  <section aria-labelledby="features-heading">
+    <h2 id="features-heading" class="h2">What we support</h2>
+    <ul>
+      <li>Responsive layout from small phone screens to large desktop displays</li>
+      <li>Skip link to jump directly to main content</li>
+      <li>Semantic HTML landmarks for header, navigation, main content, and footer</li>
+      <li>Visible keyboard focus indicators on interactive elements</li>
+      <li>Text resizing and readable line lengths on all screen sizes</li>
+      <li>Reduced-motion support when your system requests it</li>
+      <li>Dark mode support when your system prefers dark colour schemes</li>
+      <li>Screen-reader text for external links and key actions</li>
+      <li>Minimum touch target sizes for buttons and navigation links</li>
+      <li>
+        <a href="https://brailleinstitute.org/freefont" rel="noopener noreferrer" class="external-link">
+          Atkinson Hyperlegible
+          <span class="sr-only">(opens in new tab)</span>
+        </a>
+        — a typeface designed by the Braille Institute for low-vision and dyslexic readers, with distinct letterforms that reduce character confusion
+      </li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="compatibility-heading">
+    <h2 id="compatibility-heading" class="h2">Assistive technology compatibility</h2>
+    <p>
+      Pages are tested for logical heading order, labelled navigation, and descriptive link text.
+      Story lists use structured lists so screen readers can announce item counts and navigate by article.
+    </p>
+  </section>
+
+  <section aria-labelledby="feedback-heading">
+    <h2 id="feedback-heading" class="h2">Feedback</h2>
+    <p>
+      If you encounter a barrier while using this site, please tell us what page you were on,
+      what assistive technology you were using, and what went wrong. Accessibility improvements
+      are part of the MVP roadmap.
+    </p>
+  </section>
+</section>
+{% endblock %}
