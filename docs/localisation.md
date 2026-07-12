@@ -39,7 +39,7 @@ Place names follow official spelling (e.g. **Aotearoa New Zealand** in narrative
 | Surface | Locale |
 |---------|--------|
 | `docs/*.md`, root `README.md` | en-NZ |
-| Public site templates (`brief/templates/public/`) | en-NZ |
+| Public site (`web/public/src/`) | en-NZ |
 | Edition tagline and site descriptions | en-NZ |
 | Placeholder sample stories | en-NZ |
 | Review UI | en-NZ |

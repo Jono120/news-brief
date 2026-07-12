@@ -68,7 +68,7 @@ def print_feed_check_table(
     for result in results:
         if result.status == "error":
             error_count += 1
-            status_cell = f"[red]error[/red]"
+            status_cell = "[red]error[/red]"
             sample = result.error or ""
         else:
             status_cell = "[green]ok[/green]"

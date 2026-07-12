@@ -11,7 +11,7 @@ from rich.table import Table
 from brief.draft import draft_candidates
 from brief.feeds import check_all_sources, print_feed_check_table
 from brief.ingest import ingest_sources
-from brief.models import StoryStatus, init_db, list_stories, load_edition_config
+from brief.models import StoryStatus, count_stories, init_db, list_stories, load_edition_config
 from brief.publish import publish_issue
 from brief.server import resolve_tls_material, run_uvicorn, service_url
 
@@ -148,21 +148,20 @@ def publish(
         raise typer.Exit(code=1) from exc
     console.print(f"[green]Published[/green] to {issue_dir}")
 
+    leftover = [s for s in list_stories(StoryStatus.APPROVED, limit=100) if not s.issue_date]
+    if leftover:
+        console.print(
+            f"[yellow]{len(leftover)} approved stor{'y' if len(leftover) == 1 else 'ies'} "
+            "did not fit this issue and will roll into the next one.[/yellow]"
+        )
+
 
 @app.command()
 def serve(
     host: str = "127.0.0.1",
     port: int = 8080,
-    https: bool = typer.Option(True, "--https/--no-https", help="Serve over HTTPS (default)."),
-    ssl_certfile: str | None = typer.Option(None, help="TLS certificate PEM file"),
-    ssl_keyfile: str | None = typer.Option(None, help="TLS private key PEM file"),
-    require_https: bool | None = typer.Option(
-        None,
-        "--require-https/--allow-http",
-        help="Redirect plain HTTP requests to HTTPS.",
-    ),
 ) -> None:
-    """Run the public issue viewer (Next.js) for general readers."""
+    """Run the public issue viewer (Next.js dev server) for general readers."""
     import shutil
     import subprocess
     from pathlib import Path
@@ -177,9 +176,7 @@ def serve(
         console.print("[red]npm not found — install Node.js 20+[/red]")
         raise typer.Exit(code=1)
 
-    scheme = "https" if https else "http"
-    url = f"{scheme}://{host}:{port}"
-    console.print(f"Public site: [bold]{url}[/bold]")
+    console.print(f"Public site: [bold]http://{host}:{port}[/bold]")
     console.print("[dim]Starting Next.js (run npm run build in web/public for production)[/dim]")
 
     env = os.environ.copy()
@@ -226,7 +223,7 @@ def status() -> None:
     edition = load_edition_config()["edition"]
     table = Table(title=f"{edition['name']} queue")
     for status in StoryStatus:
-        table.add_row(status.value, str(len(list_stories(status, limit=500))))
+        table.add_row(status.value, str(count_stories(status)))
     console.print(table)
 
 

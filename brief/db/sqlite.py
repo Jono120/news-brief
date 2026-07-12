@@ -1,19 +1,24 @@
 from __future__ import annotations
 
 import sqlite3
-from typing import Any
+from contextlib import closing, contextmanager
+from typing import Any, Iterator
 
 from brief.entities import Story, StoryStatus, story_from_row, utc_now
 from brief.paths import DATA_DIR, DB_PATH
 
 
 class SqliteRepository:
-    def connect(self) -> sqlite3.Connection:
+    @contextmanager
+    def connect(self) -> Iterator[sqlite3.Connection]:
+        """Yield a connection that commits on success and always closes."""
         DATA_DIR.mkdir(parents=True, exist_ok=True)
         conn = sqlite3.connect(DB_PATH)
         conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA foreign_keys = ON")
-        return conn
+        with closing(conn):
+            with conn:
+                yield conn
 
     def init(self) -> None:
         with self.connect() as conn:
@@ -119,6 +124,15 @@ class SqliteRepository:
         with self.connect() as conn:
             rows = conn.execute(query, params).fetchall()
         return [story_from_row(row) for row in rows]
+
+    def count_stories(self, status: StoryStatus | None = None) -> int:
+        query = "SELECT COUNT(*) FROM stories"
+        params: list[Any] = []
+        if status:
+            query += " WHERE status = ?"
+            params.append(status.value)
+        with self.connect() as conn:
+            return int(conn.execute(query, params).fetchone()[0])
 
     def get_story(self, story_id: int) -> Story | None:
         with self.connect() as conn:

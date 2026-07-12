@@ -37,14 +37,15 @@ See also the live page at `/accessibility` when the server is running.
 
 The sample issue is clearly labelled **Sample issue — placeholder content**. Stories do not link externally; they demonstrate format and APAC editorial tone for demos.
 
-## Static assets
+## Source layout
 
 | Path | Purpose |
 |------|---------|
-| `brief/static/public/css/site.css` | Styles |
-| `brief/static/public/js/site.js` | Mobile navigation toggle |
-| `brief/templates/public/*.j2` | Jinja2 page templates |
+| `web/public/src/app/` | Next.js routes (home, issues, accessibility, RSS) |
+| `web/public/src/components/SiteShell.tsx` | Shared page shell and navigation |
+| `web/public/src/lib/issues.ts` | Reads published `issue.json` files and the sample issue |
+| `web/public/public/` | Favicons and static assets |
 
 ## Production deployment (future)
 
-The MVP serves via Uvicorn locally. For production, place a reverse proxy (nginx, Caddy) in front of Uvicorn or export static issue pages — not yet automated in this repo.
+The MVP serves the Next.js dev server locally via `brief serve`. For production, run `npm run build` in `web/public` behind a reverse proxy (nginx, Caddy), or export static issue pages — not yet automated in this repo.

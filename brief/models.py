@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import sqlite3
 from pathlib import Path
 from typing import Any
 
@@ -18,7 +17,7 @@ __all__ = [
     "ROOT",
     "Story",
     "StoryStatus",
-    "connect",
+    "count_stories",
     "dump_json",
     "get_story",
     "init_db",
@@ -32,31 +31,27 @@ __all__ = [
 ]
 
 
-def connect() -> sqlite3.Connection:
-    """Legacy SQLite connection — prefer get_repository() for new code."""
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    conn.execute("PRAGMA foreign_keys = ON")
-    return conn
-
-
 def init_db() -> None:
+    """Create the schema (SQLite) or verify connectivity (Supabase).
+
+    Call once at process startup — repository operations assume it has run.
+    """
     get_repository().init()
 
 
 def upsert_story(story: Story) -> int:
-    init_db()
     return get_repository().upsert_story(story)
 
 
 def list_stories(status: StoryStatus | None = None, limit: int = 100) -> list[Story]:
-    init_db()
     return get_repository().list_stories(status=status, limit=limit)
 
 
+def count_stories(status: StoryStatus | None = None) -> int:
+    return get_repository().count_stories(status=status)
+
+
 def get_story(story_id: int) -> Story | None:
-    init_db()
     return get_repository().get_story(story_id)
 
 

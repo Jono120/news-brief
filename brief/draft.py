@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import os
 import re
 
@@ -7,6 +8,8 @@ import httpx
 
 from brief.models import Story, StoryStatus, load_edition_config, list_stories, update_story
 from brief.server import HTTPS_CLIENT_DEFAULTS
+
+logger = logging.getLogger(__name__)
 
 SENTENCE_SPLIT = re.compile(r"(?<=[.!?])\s+")
 
@@ -73,7 +76,14 @@ No markdown, no bullet points."""
             lines = [line.strip() for line in content.splitlines() if line.strip()]
             if len(lines) >= 2:
                 return lines[0], lines[1]
-    except Exception:
+            logger.warning(
+                "LLM returned an unexpected format for %r — using extractive summary",
+                story.title,
+            )
+    except Exception as exc:
+        logger.warning(
+            "LLM summary failed for %r (%s) — using extractive summary", story.title, exc
+        )
         return None
     return None
 

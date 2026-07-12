@@ -82,6 +82,7 @@ brief-apac/
   supabase/         PostgreSQL migrations for dev/prod
   config/           Edition and RSS source configuration
   content/          Placeholder public content
+  tests/            Pytest suite (scoring, drafting, repository, API)
   docs/             Project documentation (en-NZ)
   data/             SQLite database (gitignored, default backend)
   output/           Published issues (gitignored)
@@ -89,7 +90,14 @@ brief-apac/
 
 ## Tooling
 
-Production dependencies are pinned in `requirements.txt`. Dev extras in `requirements-dev.txt`.
+Production dependencies are pinned in `requirements.txt`. Dev tooling (pytest, ruff) in `requirements-dev.txt`.
+
+Run the checks:
+
+```bash
+python -m pytest
+python -m ruff check brief tests
+```
 
 | Package | Version |
 |---------|---------|

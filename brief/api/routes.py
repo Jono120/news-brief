@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from brief.issues import (
     category_labels,
@@ -12,7 +12,14 @@ from brief.issues import (
     get_public_issue,
     list_public_issues,
 )
-from brief.models import StoryStatus, get_story, list_stories, load_edition_config, update_story
+from brief.models import (
+    StoryStatus,
+    count_stories,
+    get_story,
+    list_stories,
+    load_edition_config,
+    update_story,
+)
 
 router = APIRouter(prefix="/api")
 
@@ -22,10 +29,6 @@ class StoryUpdate(BaseModel):
     why_it_matters: str | None = None
     category: str | None = None
     read_time_minutes: int | None = None
-
-
-class StoryAction(BaseModel):
-    action: str = Field(..., pattern="^(approve|reject|save)$")
 
 
 def _story_dict(story) -> dict[str, Any]:
@@ -51,9 +54,9 @@ def edition() -> dict[str, Any]:
 def queue_stats() -> dict[str, Any]:
     edition = edition_info()
     return {
-        "candidates": len(list_stories(StoryStatus.CANDIDATE, limit=500)),
-        "drafted": len(list_stories(StoryStatus.DRAFTED, limit=500)),
-        "approved": len(list_stories(StoryStatus.APPROVED, limit=500)),
+        "candidates": count_stories(StoryStatus.CANDIDATE),
+        "drafted": count_stories(StoryStatus.DRAFTED),
+        "approved": count_stories(StoryStatus.APPROVED),
         "stories_per_issue": edition["stories_per_issue"],
         "tagline": edition["tagline"],
     }
@@ -87,7 +90,10 @@ def story_patch(story_id: int, body: StoryUpdate) -> dict[str, Any]:
         fields["category"] = body.category.strip()
     if body.read_time_minutes is not None:
         fields["read_time_minutes"] = body.read_time_minutes
-    fields["status"] = StoryStatus.DRAFTED
+    # Editing a fresh candidate moves it into the drafted queue; edits to
+    # approved/published stories must not knock them out of the issue.
+    if story.status == StoryStatus.CANDIDATE:
+        fields["status"] = StoryStatus.DRAFTED
 
     updated = update_story(story_id, **fields)
     if not updated:

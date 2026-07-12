@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import html
+import logging
 import re
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
@@ -11,6 +12,8 @@ import httpx
 
 from brief.models import Story, StoryStatus, load_edition_config, load_sources_config, upsert_story, utc_now
 from brief.server import HTTPS_CLIENT_DEFAULTS, require_https_url
+
+logger = logging.getLogger(__name__)
 
 TAG_RE = re.compile(r"<[^>]+>")
 WS_RE = re.compile(r"\s+")
@@ -42,11 +45,30 @@ def estimate_read_time(text: str) -> int:
     return max(1, round(words / 220))
 
 
-def score_apac_relevance(title: str, excerpt: str, source: dict[str, Any]) -> float:
-    edition = load_edition_config()
-    keywords = edition.get("scoring", {}).get("apac_keywords", [])
+def compile_keyword_pattern(keywords: list[str]) -> re.Pattern[str] | None:
+    """Build one whole-word regex for all keywords (case-insensitive).
+
+    Word boundaries stop short country codes such as "nz" or "sg" matching
+    inside unrelated words ("in" inside "innovation", "th" inside "the").
+    """
+    terms = [keyword.strip().lower() for keyword in keywords if keyword.strip()]
+    if not terms:
+        return None
+    alternation = "|".join(re.escape(term) for term in sorted(terms, key=len, reverse=True))
+    return re.compile(rf"\b(?:{alternation})\b")
+
+
+def score_apac_relevance(
+    title: str,
+    excerpt: str,
+    source: dict[str, Any],
+    keyword_pattern: re.Pattern[str] | None = None,
+) -> float:
+    if keyword_pattern is None:
+        keywords = load_edition_config().get("scoring", {}).get("apac_keywords", [])
+        keyword_pattern = compile_keyword_pattern(keywords)
     haystack = f"{title} {excerpt}".lower()
-    hits = sum(1 for keyword in keywords if keyword in haystack)
+    hits = len(set(keyword_pattern.findall(haystack))) if keyword_pattern else 0
     keyword_score = min(1.0, hits / 4)
     boost = float(source.get("region_boost", 0.0))
     if source.get("region") == "APAC":
@@ -54,18 +76,25 @@ def score_apac_relevance(title: str, excerpt: str, source: dict[str, Any]) -> fl
     return round(min(1.0, keyword_score * 0.75 + boost), 3)
 
 
+CATEGORY_RULES: dict[str, tuple[str, ...]] = {
+    "policy": ("regulation", "privacy", "law", "government", "compliance", "gdpr", "act"),
+    "security": ("breach", "ransomware", "cve", "vulnerability", "hack", "malware", "phishing"),
+    "ai": ("ai", "llm", "machine learning", "openai", "anthropic", "model"),
+    "fintech": ("payment", "bank", "fintech", "upi", "crypto", "lending"),
+    "startups": ("funding", "series", "seed", "venture", "startup", "raises"),
+    "engineering": ("kubernetes", "open source", "github", "developer", "api", "cloud"),
+}
+
+CATEGORY_PATTERNS: dict[str, re.Pattern[str]] = {
+    category: re.compile(r"\b(?:" + "|".join(re.escape(term) for term in terms) + r")\b")
+    for category, terms in CATEGORY_RULES.items()
+}
+
+
 def guess_category(title: str, excerpt: str, default: str) -> str:
     haystack = f"{title} {excerpt}".lower()
-    rules = {
-        "policy": ("regulation", "privacy", "law", "government", "compliance", "gdpr", "act "),
-        "security": ("breach", "ransomware", "cve", "vulnerability", "hack", "malware", "phishing"),
-        "ai": (" ai ", "llm", "machine learning", "openai", "anthropic", "model"),
-        "fintech": ("payment", "bank", "fintech", "upi", "crypto", "lending"),
-        "startups": ("funding", "series ", "seed", "venture", "startup", "raises"),
-        "engineering": ("kubernetes", "open source", "github", "developer", "api", "cloud"),
-    }
-    for category, terms in rules.items():
-        if any(term in haystack for term in terms):
+    for category, pattern in CATEGORY_PATTERNS.items():
+        if pattern.search(haystack):
             return category
     return default
 
@@ -82,12 +111,16 @@ def fetch_feed(url: str) -> feedparser.FeedParserDict:
 def ingest_sources(max_per_source: int = 15, min_score: float | None = None) -> dict[str, int]:
     edition = load_edition_config()
     threshold = min_score if min_score is not None else edition["edition"]["min_apac_score"]
+    keyword_pattern = compile_keyword_pattern(
+        edition.get("scoring", {}).get("apac_keywords", [])
+    )
     stats = {"fetched": 0, "stored": 0, "skipped_low_score": 0, "errors": 0}
 
     for source in load_sources_config():
         try:
             feed = fetch_feed(source["url"])
-        except Exception:
+        except Exception as exc:
+            logger.warning("Feed %s (%s) failed: %s", source.get("name"), source.get("url"), exc)
             stats["errors"] += 1
             continue
 
@@ -103,7 +136,7 @@ def ingest_sources(max_per_source: int = 15, min_score: float | None = None) -> 
                 or entry.get("description")
                 or entry.get("content", [{}])[0].get("value", "")
             )
-            score = score_apac_relevance(title, excerpt, source)
+            score = score_apac_relevance(title, excerpt, source, keyword_pattern)
             if score < threshold:
                 stats["skipped_low_score"] += 1
                 continue

@@ -10,3 +10,4 @@ typer==0.26.8
 trustme==1.2.1
 uvicorn[standard]==0.50.0
 python-multipart==0.0.32
+supabase==2.31.0

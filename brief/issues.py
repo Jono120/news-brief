@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from brief.entities import Issue, Story
+from brief.entities import Issue
 from brief.models import load_edition_config
 from brief.paths import OUTPUT_DIR, ROOT
 

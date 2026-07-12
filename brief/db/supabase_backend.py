@@ -3,7 +3,6 @@ from __future__ import annotations
 import os
 from typing import Any
 
-from brief.db.base import StoryRepository
 from brief.entities import Story, StoryStatus, utc_now
 
 
@@ -103,6 +102,13 @@ class SupabaseRepository:
             query = query.eq("status", status.value)
         result = query.execute()
         return [_row_to_story(row) for row in (result.data or [])]
+
+    def count_stories(self, status: StoryStatus | None = None) -> int:
+        query = self._client.table(self._table).select("id", count="exact", head=True)
+        if status:
+            query = query.eq("status", status.value)
+        result = query.execute()
+        return int(result.count or 0)
 
     def get_story(self, story_id: int) -> Story | None:
         result = (

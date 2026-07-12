@@ -55,15 +55,15 @@ scoring:
     - asean
     - oceania
     - pacific
+    # Country codes match whole words only. "in", "my", and "id" are excluded
+    # because they collide with common English words; the country names and
+    # major cities above cover those markets.
     - nz
     - au
     - sg
-    - id
-    - my
     - ph
     - th
     - vn
-    - in
     - jp
     - kr
     - tw

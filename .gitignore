@@ -1,5 +1,6 @@
 __pycache__/
 *.py[cod]
+*.egg-info/
 .venv/
 venv/
 .env
@@ -7,3 +8,10 @@ data/
 output/
 *.db
 .DS_Store
+
+# Node / frontend build artefacts
+node_modules/
+web/review/dist/
+web/public/.next/
+web/public/out/
+*.tsbuildinfo
