@@ -33,26 +33,39 @@ export interface IssueSummary {
   apac_ratio: number;
 }
 
+// Issue dates become filesystem path components — accept plain YYYY-MM-DD only.
+const ISSUE_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+function isValidIssueDate(value: string): boolean {
+  return ISSUE_DATE_RE.test(value);
+}
+
 function loadJsonIssue(filePath: string): PublicIssue | null {
   if (!fs.existsSync(filePath)) return null;
-  const data = JSON.parse(fs.readFileSync(filePath, "utf-8"));
-  return {
-    date: data.date,
-    edition_slug: data.edition_slug,
-    intro: data.intro ?? "",
-    apac_ratio: Number(data.apac_ratio ?? 0),
-    is_sample: Boolean(data.is_sample),
-    stories: (data.stories ?? []).map((s: PublicStory) => ({
-      title: s.title,
-      url: s.url,
-      source_name: s.source_name,
-      category: s.category ?? "misc",
-      summary: s.summary ?? "",
-      why_it_matters: s.why_it_matters ?? "",
-      read_time_minutes: Number(s.read_time_minutes ?? 3),
-      apac_score: Number(s.apac_score ?? 0),
-    })),
-  };
+  try {
+    const data = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+    if (typeof data.date !== "string") throw new Error("missing date");
+    return {
+      date: data.date,
+      edition_slug: data.edition_slug,
+      intro: data.intro ?? "",
+      apac_ratio: Number(data.apac_ratio ?? 0),
+      is_sample: Boolean(data.is_sample),
+      stories: (data.stories ?? []).map((s: PublicStory) => ({
+        title: s.title,
+        url: s.url,
+        source_name: s.source_name,
+        category: s.category ?? "misc",
+        summary: s.summary ?? "",
+        why_it_matters: s.why_it_matters ?? "",
+        read_time_minutes: Number(s.read_time_minutes ?? 3),
+        apac_score: Number(s.apac_score ?? 0),
+      })),
+    };
+  } catch (error) {
+    console.warn(`Skipping malformed issue file ${filePath}:`, error);
+    return null;
+  }
 }
 
 function editionSlug(): string {
@@ -66,6 +79,7 @@ function listPublishedDates(slug: string): string[] {
     .readdirSync(editionDir, { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name)
+    .filter(isValidIssueDate)
     .filter((name) => fs.existsSync(path.join(editionDir, name, "issue.json")))
     .sort()
     .reverse();
@@ -78,6 +92,7 @@ export function loadPlaceholderIssue(): PublicIssue {
 }
 
 export function loadPublishedIssue(issueDate: string): PublicIssue | null {
+  if (!isValidIssueDate(issueDate)) return null;
   const slug = editionSlug();
   return loadJsonIssue(path.join(OUTPUT_DIR, slug, issueDate, "issue.json"));
 }

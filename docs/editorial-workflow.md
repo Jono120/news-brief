@@ -49,6 +49,16 @@ For each drafted story, confirm:
 
 After `brief publish`, one directory per issue date contains all publish formats. The public site reads `issue.json`; run `brief sync-public` to rebuild JSON from the database if needed.
 
+## Security notes
+
+- **LLM drafting and untrusted feed content.** When `brief draft` uses OpenAI, article
+  excerpts from RSS feeds are embedded in the prompt. A hostile article could try to steer
+  the generated summary (prompt injection). This is an accepted risk while every draft
+  passes human review — never publish a story without reading the summary.
+- **Review API auth.** The API is unauthenticated by default and binds to `127.0.0.1`.
+  Set `BRIEF_API_TOKEN` (and `VITE_API_TOKEN` for the UI) before exposing it beyond
+  localhost.
+
 ## Not in scope (MVP)
 
 - Email delivery (Postmark, Buttondown, etc.)

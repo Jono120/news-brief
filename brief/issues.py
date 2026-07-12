@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import logging
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -9,7 +11,17 @@ from brief.entities import Issue
 from brief.models import load_edition_config
 from brief.paths import OUTPUT_DIR, ROOT
 
+logger = logging.getLogger(__name__)
+
 PLACEHOLDER_PATH = ROOT / "content" / "placeholder" / "issue.json"
+
+ISSUE_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+
+def is_valid_issue_date(value: str) -> bool:
+    """Issue dates are path components — reject anything that is not
+    a plain YYYY-MM-DD string before it reaches the filesystem."""
+    return bool(ISSUE_DATE_RE.fullmatch(value))
 
 
 @dataclass
@@ -112,8 +124,12 @@ def issue_to_dict(issue: Issue, apac_ratio: float, is_sample: bool = False) -> d
 def load_json_issue(path: Path) -> PublicIssue | None:
     if not path.exists():
         return None
-    data = json.loads(path.read_text(encoding="utf-8"))
-    return issue_from_dict(data)
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return issue_from_dict(data)
+    except (json.JSONDecodeError, KeyError, TypeError, ValueError) as exc:
+        logger.warning("Skipping malformed issue file %s: %s", path, exc)
+        return None
 
 
 def published_issue_dir(edition_slug: str, issue_date: str) -> Path:
@@ -127,12 +143,14 @@ def list_published_dates(edition_slug: str | None = None) -> list[str]:
         return []
     dates = []
     for child in edition_dir.iterdir():
-        if child.is_dir() and (child / "issue.json").exists():
+        if child.is_dir() and is_valid_issue_date(child.name) and (child / "issue.json").exists():
             dates.append(child.name)
     return sorted(dates, reverse=True)
 
 
 def load_published_issue(issue_date: str, edition_slug: str | None = None) -> PublicIssue | None:
+    if not is_valid_issue_date(issue_date):
+        return None
     slug = edition_slug or edition_info()["slug"]
     return load_json_issue(published_issue_dir(slug, issue_date) / "issue.json")
 

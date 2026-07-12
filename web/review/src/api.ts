@@ -30,12 +30,14 @@ export interface QueueStats {
 }
 
 const base = import.meta.env.VITE_API_URL ?? "";
+const apiToken = import.meta.env.VITE_API_TOKEN ?? "";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${base}${path}`, {
     ...init,
     headers: {
       "Content-Type": "application/json",
+      ...(apiToken ? { Authorization: `Bearer ${apiToken}` } : {}),
       ...init?.headers,
     },
   });

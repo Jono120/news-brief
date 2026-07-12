@@ -5,7 +5,7 @@ from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from brief.issues import issue_to_dict, published_issue_dir
+from brief.issues import is_valid_issue_date, issue_to_dict, published_issue_dir
 from brief.models import Issue, OUTPUT_DIR, Story, StoryStatus, dump_json, get_story, load_edition_config, list_stories, update_story
 
 TEMPLATE_DIR = Path(__file__).resolve().parent / "templates"
@@ -70,6 +70,8 @@ def render_issue(issue: Issue) -> dict[str, str]:
 def publish_issue(issue_date: str | None = None) -> Path:
     edition = load_edition_config()["edition"]
     target_date = issue_date or date.today().isoformat()
+    if not is_valid_issue_date(target_date):
+        raise ValueError(f"Issue date must be YYYY-MM-DD, got {target_date!r}")
     approved = [story for story in list_stories(StoryStatus.APPROVED, limit=50) if not story.issue_date]
     approved = approved[: edition["stories_per_issue"]]
     if not approved:

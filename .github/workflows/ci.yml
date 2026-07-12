@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  python:
+    name: Python — lint, test, audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install package with dev tooling
+        run: pip install -e ".[dev]"
+
+      - name: Lint
+        run: python -m ruff check brief tests
+
+      - name: Test
+        run: python -m pytest
+
+      - name: Dependency audit
+        run: |
+          pip install pip-audit
+          python -m pip_audit --skip-editable
+
+  web:
+    name: Web — build, audit
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install workspaces
+        run: npm ci
+
+      - name: Build review UI and public site
+        run: npm run build
+
+      # Moderate advisories are reported but do not fail the build; high and
+      # critical do. Raise the bar once the Next.js/postcss advisory is fixed.
+      - name: Dependency audit
+        run: npm audit --omit=dev --audit-level=high

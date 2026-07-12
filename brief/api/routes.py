@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from brief.issues import (
     category_labels,
@@ -25,10 +25,10 @@ router = APIRouter(prefix="/api")
 
 
 class StoryUpdate(BaseModel):
-    summary: str | None = None
-    why_it_matters: str | None = None
+    summary: str | None = Field(None, max_length=2000)
+    why_it_matters: str | None = Field(None, max_length=1000)
     category: str | None = None
-    read_time_minutes: int | None = None
+    read_time_minutes: int | None = Field(None, ge=1, le=60)
 
 
 def _story_dict(story) -> dict[str, Any]:
@@ -87,7 +87,10 @@ def story_patch(story_id: int, body: StoryUpdate) -> dict[str, Any]:
     if body.why_it_matters is not None:
         fields["why_it_matters"] = body.why_it_matters.strip()
     if body.category is not None:
-        fields["category"] = body.category.strip()
+        category = body.category.strip()
+        if category not in category_labels():
+            raise HTTPException(status_code=422, detail=f"Unknown category: {category}")
+        fields["category"] = category
     if body.read_time_minutes is not None:
         fields["read_time_minutes"] = body.read_time_minutes
     # Editing a fresh candidate moves it into the drafted queue; edits to

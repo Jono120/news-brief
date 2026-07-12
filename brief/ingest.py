@@ -6,6 +6,7 @@ import re
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
 from typing import Any
+from urllib.parse import urlparse
 
 import feedparser
 import httpx
@@ -22,6 +23,13 @@ WS_RE = re.compile(r"\s+")
 def clean_text(value: str) -> str:
     text = html.unescape(TAG_RE.sub(" ", value or ""))
     return WS_RE.sub(" ", text).strip()
+
+
+def is_safe_story_url(url: str) -> bool:
+    """Only http(s) links may be stored — feed content is untrusted and a
+    javascript: URL would otherwise flow through to published pages."""
+    parsed = urlparse(url)
+    return parsed.scheme in {"http", "https"} and bool(parsed.netloc)
 
 
 def parse_published(entry: dict[str, Any]) -> str:
@@ -128,7 +136,7 @@ def ingest_sources(max_per_source: int = 15, min_score: float | None = None) -> 
             stats["fetched"] += 1
             title = clean_text(entry.get("title", ""))
             link = entry.get("link", "").strip()
-            if not title or not link:
+            if not title or not is_safe_story_url(link):
                 continue
 
             excerpt = clean_text(

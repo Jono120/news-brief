@@ -13,9 +13,13 @@ class SqliteRepository:
     def connect(self) -> Iterator[sqlite3.Connection]:
         """Yield a connection that commits on success and always closes."""
         DATA_DIR.mkdir(parents=True, exist_ok=True)
-        conn = sqlite3.connect(DB_PATH)
+        conn = sqlite3.connect(DB_PATH, timeout=5.0)
         conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA foreign_keys = ON")
+        # WAL lets the review API read while the CLI writes; busy_timeout
+        # retries instead of raising "database is locked" immediately.
+        conn.execute("PRAGMA journal_mode = WAL")
+        conn.execute("PRAGMA busy_timeout = 5000")
         with closing(conn):
             with conn:
                 yield conn
@@ -32,11 +36,14 @@ class SqliteRepository:
                     published_at TEXT NOT NULL,
                     excerpt TEXT NOT NULL DEFAULT '',
                     category TEXT NOT NULL DEFAULT 'misc',
-                    apac_score REAL NOT NULL DEFAULT 0,
+                    apac_score REAL NOT NULL DEFAULT 0
+                        CHECK (apac_score >= 0 AND apac_score <= 1),
                     summary TEXT NOT NULL DEFAULT '',
                     why_it_matters TEXT NOT NULL DEFAULT '',
-                    read_time_minutes INTEGER NOT NULL DEFAULT 3,
-                    status TEXT NOT NULL DEFAULT 'candidate',
+                    read_time_minutes INTEGER NOT NULL DEFAULT 3
+                        CHECK (read_time_minutes >= 1),
+                    status TEXT NOT NULL DEFAULT 'candidate'
+                        CHECK (status IN ('candidate', 'drafted', 'approved', 'rejected', 'published')),
                     issue_date TEXT,
                     created_at TEXT NOT NULL,
                     updated_at TEXT NOT NULL

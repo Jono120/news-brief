@@ -52,3 +52,38 @@ def test_queue_stats_counts(client):
 def test_missing_story_returns_404(client):
     assert client.get("/api/stories/9999").status_code == 404
     assert client.patch("/api/stories/9999", json={"summary": "x"}).status_code == 404
+
+
+def test_patch_rejects_out_of_bounds_read_time(client):
+    story_id = upsert_story(make_story())
+    assert (
+        client.patch(f"/api/stories/{story_id}", json={"read_time_minutes": 0}).status_code == 422
+    )
+    assert (
+        client.patch(f"/api/stories/{story_id}", json={"read_time_minutes": 999}).status_code
+        == 422
+    )
+
+
+def test_patch_rejects_unknown_category(client):
+    story_id = upsert_story(make_story())
+    response = client.patch(f"/api/stories/{story_id}", json={"category": "not-a-category"})
+    assert response.status_code == 422
+    assert client.patch(f"/api/stories/{story_id}", json={"category": "ai"}).status_code == 200
+
+
+def test_public_issue_rejects_malformed_date(client):
+    assert client.get("/api/public/issues/..%2F..%2Fetc").status_code == 404
+
+
+def test_bearer_token_required_when_configured(sqlite_repo, monkeypatch):
+    monkeypatch.setenv("BRIEF_API_TOKEN", "secret-token")
+    secured = TestClient(create_api_app())
+
+    assert secured.get("/api/stories").status_code == 401
+    assert secured.get("/api/health").status_code == 200  # health stays open
+
+    ok = secured.get("/api/stories", headers={"Authorization": "Bearer secret-token"})
+    assert ok.status_code == 200
+    bad = secured.get("/api/stories", headers={"Authorization": "Bearer wrong"})
+    assert bad.status_code == 401

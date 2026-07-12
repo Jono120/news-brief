@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import os
 from datetime import date
 from typing import Callable
@@ -19,6 +20,11 @@ app = typer.Typer(help="Brief APAC MVP workflow CLI", no_args_is_help=True)
 feeds_app = typer.Typer(help="RSS feed utilities")
 app.add_typer(feeds_app, name="feeds")
 console = Console()
+
+
+@app.callback()
+def _configure_logging() -> None:
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 
 
 @feeds_app.command("check")
