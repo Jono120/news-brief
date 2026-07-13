@@ -65,8 +65,9 @@ def _run_web_server(
     url = service_url(host, port, use_tls=bool(cert))
     console.print(f"{label}: [bold]{url}[/bold]")
     if label == "API":
+        # ASCII arrow: Windows legacy consoles (cp1252) cannot encode "\u2192".
         console.print(
-            "[dim]Review UI (Vite): npm run dev:review in web/ → http://localhost:5173[/dim]"
+            "[dim]Review UI (Vite): npm run dev:review in web/ -> http://localhost:5173[/dim]"
         )
     if https and cert and key and not ssl_certfile and not ssl_keyfile:
         console.print("[dim]Using development TLS certificate in data/certs/[/dim]")
