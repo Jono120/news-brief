@@ -2,13 +2,17 @@ import type { NextConfig } from "next";
 import path from "path";
 
 const projectRoot = path.join(__dirname, "..", "..");
+const isDev = process.env.NODE_ENV !== "production";
 
-// 'unsafe-inline'/'unsafe-eval' for scripts are required by the Next.js dev
-// runtime; styles allow inline for Next's style injection. Fonts load from
-// fonts.bunny.net (see src/app/layout.tsx).
+// Dev: 'unsafe-inline'/'unsafe-eval' are required by the Next.js dev runtime.
+// Production: drop 'unsafe-eval'; keep 'unsafe-inline' for Next's script bootstrap.
+const scriptSrc = isDev
+  ? "'self' 'unsafe-inline' 'unsafe-eval'"
+  : "'self' 'unsafe-inline'";
+
 const contentSecurityPolicy = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+  `script-src ${scriptSrc}`,
   "style-src 'self' 'unsafe-inline' https://fonts.bunny.net",
   "font-src 'self' https://fonts.bunny.net",
   "img-src 'self' data:",
