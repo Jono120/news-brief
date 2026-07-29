@@ -6,14 +6,15 @@
     "clean": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true})\"",
     "dev": "next dev --port 8080",
     "dev:clean": "npm run clean && npm run dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start --port 8080"
   },
   "dependencies": {
     "js-yaml": "^4.1.0",
-    "next": "^15.3.5",
+    "next": "^16.2.12",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "sharp": "^0.35.3"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",
