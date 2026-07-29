@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+import httpx
 from rich.console import Console
 from rich.table import Table
 
@@ -39,7 +40,7 @@ def check_all_sources() -> list[FeedCheckResult]:
                     sample_title=sample,
                 )
             )
-        except Exception as exc:
+        except (httpx.HTTPError, ValueError) as exc:
             results.append(
                 FeedCheckResult(
                     name=name,

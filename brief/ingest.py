@@ -129,7 +129,7 @@ def ingest_sources(max_per_source: int = 15, min_score: float | None = None) -> 
     for source in load_sources_config():
         try:
             feed = fetch_feed(source["url"])
-        except Exception as exc:
+        except (httpx.HTTPError, ValueError) as exc:
             logger.warning("Feed %s (%s) failed: %s", source.get("name"), source.get("url"), exc)
             stats["errors"] += 1
             continue

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 import os
 import re
@@ -82,7 +83,7 @@ No markdown, no bullet points."""
                 "LLM returned an unexpected format for %r — using extractive summary",
                 story.title,
             )
-    except Exception as exc:
+    except (httpx.HTTPError, KeyError, IndexError, TypeError, ValueError, json.JSONDecodeError) as exc:
         logger.warning(
             "LLM summary failed for %r (%s) — using extractive summary", story.title, exc
         )
