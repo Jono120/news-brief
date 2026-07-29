@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import os
 from typing import Any
 from urllib.parse import urlparse
@@ -12,6 +13,8 @@ from starlette.responses import RedirectResponse, Response
 from starlette.types import ASGIApp
 
 from brief.certs import ensure_dev_tls_certs
+
+logger = logging.getLogger(__name__)
 
 HTTPS_CLIENT_DEFAULTS = {"verify": True, "follow_redirects": True}
 
@@ -110,9 +113,7 @@ def run_uvicorn(
     forwarded_allow_ips = os.environ.get("BRIEF_FORWARDED_ALLOW_IPS", "127.0.0.1")
     using_tls = bool(ssl_certfile and ssl_keyfile)
     if _is_unsafe_forwarded_allow_ips(forwarded_allow_ips) and not require_https and not using_tls:
-        import logging
-
-        logging.warning(
+        logger.warning(
             "BRIEF_FORWARDED_ALLOW_IPS=%r accepts X-Forwarded-* from any client without "
             "HTTPS enforcement — clients can spoof X-Forwarded-Proto. Restrict the allow "
             "list or enable HTTPS with --require-https.",

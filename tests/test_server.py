@@ -1,9 +1,5 @@
 from __future__ import annotations
 
-import logging
-
-import pytest
-
 from brief.server import _is_unsafe_forwarded_allow_ips, is_loopback_host, run_uvicorn
 
 
@@ -32,7 +28,7 @@ def test_run_uvicorn_warns_on_wide_forwarded_allow_ips(monkeypatch):
     def capture_warning(message, *args):
         warnings.append(message % args if args else message)
 
-    monkeypatch.setattr(logging, "warning", capture_warning)
+    monkeypatch.setattr("brief.server.logger.warning", capture_warning)
     monkeypatch.setattr(
         "uvicorn.run",
         lambda *args, **kwargs: None,
