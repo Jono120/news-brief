@@ -15,6 +15,14 @@ from brief.certs import ensure_dev_tls_certs
 
 HTTPS_CLIENT_DEFAULTS = {"verify": True, "follow_redirects": True}
 
+_LOOPBACK_HOSTS = frozenset({"127.0.0.1", "localhost", "::1"})
+
+
+def is_loopback_host(host: str) -> bool:
+    """Return True when host binds only to the local machine."""
+    normalized = host.strip().lower().strip("[]")
+    return normalized in _LOOPBACK_HOSTS
+
 
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next) -> Response:
@@ -38,10 +46,18 @@ class HttpsRedirectMiddleware(BaseHTTPMiddleware):
 
 
 def _request_is_https(request: Request) -> bool:
+    # X-Forwarded-Proto is trusted only from IPs in uvicorn's forwarded_allow_ips
+    # (BRIEF_FORWARDED_ALLOW_IPS, default 127.0.0.1). Widening that allow-list lets
+    # any client spoof HTTPS and skip redirects / HSTS.
     forwarded = request.headers.get("x-forwarded-proto", "")
     if forwarded:
         return forwarded.split(",", 1)[0].strip().lower() == "https"
     return request.url.scheme == "https"
+
+
+def _is_unsafe_forwarded_allow_ips(value: str) -> bool:
+    normalized = value.strip().lower()
+    return normalized in {"*", "0.0.0.0/0", "0.0.0.0", "::/0"}
 
 
 def add_server_middleware(app: FastAPI, *, require_https: bool) -> None:
@@ -89,13 +105,26 @@ def run_uvicorn(
     port: int,
     ssl_certfile: str | None = None,
     ssl_keyfile: str | None = None,
+    require_https: bool = False,
 ) -> None:
+    forwarded_allow_ips = os.environ.get("BRIEF_FORWARDED_ALLOW_IPS", "127.0.0.1")
+    using_tls = bool(ssl_certfile and ssl_keyfile)
+    if _is_unsafe_forwarded_allow_ips(forwarded_allow_ips) and not require_https and not using_tls:
+        import logging
+
+        logging.warning(
+            "BRIEF_FORWARDED_ALLOW_IPS=%r accepts X-Forwarded-* from any client without "
+            "HTTPS enforcement — clients can spoof X-Forwarded-Proto. Restrict the allow "
+            "list or enable HTTPS with --require-https.",
+            forwarded_allow_ips,
+        )
+
     kwargs: dict[str, Any] = {
         "host": host,
         "port": port,
         "log_level": "info",
         "proxy_headers": True,
-        "forwarded_allow_ips": os.environ.get("BRIEF_FORWARDED_ALLOW_IPS", "127.0.0.1"),
+        "forwarded_allow_ips": forwarded_allow_ips,
     }
     if ssl_certfile and ssl_keyfile:
         kwargs["ssl_certfile"] = ssl_certfile
