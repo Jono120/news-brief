@@ -108,6 +108,8 @@ def guess_category(title: str, excerpt: str, default: str) -> str:
 
 
 def fetch_feed(url: str) -> feedparser.FeedParserDict:
+    # Feed URLs come from trusted, checked-in config/sources.yaml — not user input.
+    # Do not expose source configuration via the API without an allowlist here.
     require_https_url(url, label="Feed URL")
     headers = {"User-Agent": "BriefAPAC/0.1 (+https://github.com/local/brief-apac)"}
     with httpx.Client(timeout=20.0, headers=headers, **HTTPS_CLIENT_DEFAULTS) as client:

@@ -61,6 +61,8 @@ LINE2: One sentence explaining why this matters for APAC tech professionals.
 No markdown, no bullet points."""
 
     try:
+        # OpenAI endpoint is fixed; excerpts in the prompt come from trusted ingest
+        # output (config/sources.yaml feeds), not arbitrary user input.
         with httpx.Client(timeout=45.0, **HTTPS_CLIENT_DEFAULTS) as client:
             response = client.post(
                 "https://api.openai.com/v1/chat/completions",
