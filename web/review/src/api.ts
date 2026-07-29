@@ -30,6 +30,9 @@ export interface QueueStats {
 }
 
 const base = import.meta.env.VITE_API_URL ?? "";
+// VITE_* vars are inlined into the built JS bundle at compile time — this is a
+// shared gate for the review API, not a confidential per-user credential. Pair
+// with network-level access control (VPN, reverse proxy) when deployed.
 const apiToken = import.meta.env.VITE_API_TOKEN ?? "";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
