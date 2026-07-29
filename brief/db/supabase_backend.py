@@ -1,9 +1,36 @@
 from __future__ import annotations
 
+import base64
+import json
 import os
 from typing import Any
 
 from brief.entities import Story, StoryStatus, utc_now
+
+
+def _decode_supabase_key_role(key: str) -> str | None:
+    """Return the JWT role claim from a Supabase API key, if present."""
+    parts = key.split(".")
+    if len(parts) < 2:
+        return None
+    payload = parts[1]
+    padding = "=" * (-len(payload) % 4)
+    try:
+        decoded = base64.urlsafe_b64decode(payload + padding)
+        data = json.loads(decoded)
+        role = data.get("role")
+        return str(role) if role is not None else None
+    except (ValueError, json.JSONDecodeError, TypeError):
+        return None
+
+
+def _validate_supabase_key(key: str) -> None:
+    role = _decode_supabase_key_role(key)
+    if role == "anon":
+        raise RuntimeError(
+            "SUPABASE_SERVICE_ROLE_KEY (or SUPABASE_KEY) must be the service_role key, "
+            "not the public anon key. Anon keys cannot write to the editorial pipeline."
+        )
 
 
 def _row_to_story(row: dict[str, Any]) -> Story:
@@ -56,6 +83,8 @@ class SupabaseRepository:
                 "Supabase requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY "
                 "(or SUPABASE_KEY) when BRIEF_DATABASE=supabase"
             )
+        # SUPABASE_KEY is a legacy alias — must be service_role, never the anon JWT.
+        _validate_supabase_key(key)
         from supabase import create_client
 
         self._client = create_client(url, key)

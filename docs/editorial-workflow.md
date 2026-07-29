@@ -57,7 +57,12 @@ After `brief publish`, one directory per issue date contains all publish formats
   passes human review — never publish a story without reading the summary.
 - **Review API auth.** The API is unauthenticated by default and binds to `127.0.0.1`.
   Set `BRIEF_API_TOKEN` (and `VITE_API_TOKEN` for the UI) before exposing it beyond
-  localhost.
+  localhost. `VITE_API_TOKEN` is inlined into the review UI JavaScript bundle at build
+  time — anyone who can load the UI can read it. Treat it as a shared gate paired with
+  network-level access control (VPN, reverse proxy auth), not a confidential secret.
+- **Rate limiting.** Mutation endpoints (`PATCH` / `POST` on `/api/stories/*`) have no
+  rate limiting. For any deployment beyond a single trusted editor on localhost, add
+  throttling (e.g. `slowapi` in the API or limits at the reverse proxy).
 
 ## Not in scope (MVP)
 

@@ -14,7 +14,7 @@ from brief.feeds import check_all_sources, print_feed_check_table
 from brief.ingest import ingest_sources
 from brief.models import StoryStatus, count_stories, init_db, list_stories, load_edition_config
 from brief.publish import publish_issue
-from brief.server import resolve_tls_material, run_uvicorn, service_url
+from brief.server import is_loopback_host, resolve_tls_material, run_uvicorn, service_url
 
 app = typer.Typer(help="Brief APAC MVP workflow CLI", no_args_is_help=True)
 feeds_app = typer.Typer(help="RSS feed utilities")
@@ -61,6 +61,14 @@ def _run_web_server(
         raise typer.Exit(code=1) from exc
 
     enforce_https = https if require_https is None else require_https
+    if label == "API" and not is_loopback_host(host) and not os.environ.get(
+        "BRIEF_API_TOKEN", ""
+    ).strip():
+        console.print(
+            "[red]WARNING: BRIEF_API_TOKEN is not set while binding to a non-loopback "
+            f"host ({host}). The review API allows unauthenticated read/write access. "
+            "Set BRIEF_API_TOKEN before exposing this port beyond your machine.[/red]"
+        )
     web_app = app_factory(require_https=enforce_https)
     url = service_url(host, port, use_tls=bool(cert))
     console.print(f"{label}: [bold]{url}[/bold]")
@@ -71,7 +79,14 @@ def _run_web_server(
         )
     if https and cert and key and not ssl_certfile and not ssl_keyfile:
         console.print("[dim]Using development TLS certificate in data/certs/[/dim]")
-    run_uvicorn(web_app, host=host, port=port, ssl_certfile=cert, ssl_keyfile=key)
+    run_uvicorn(
+        web_app,
+        host=host,
+        port=port,
+        ssl_certfile=cert,
+        ssl_keyfile=key,
+        require_https=enforce_https,
+    )
 
 
 @app.command()

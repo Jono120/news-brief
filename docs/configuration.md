@@ -62,6 +62,10 @@ sources:
 
 After adding or changing feeds, run `brief feeds check` then `brief ingest`.
 
+**Security:** `config/sources.yaml` is trusted, checked-in configuration. Feed URLs
+are fetched server-side during ingest. Do not add an API or UI that lets untrusted
+users edit this file without hostname allowlisting in `brief/ingest.py`.
+
 ## Environment variables
 
 Copy `.env.example` to `.env`:
@@ -70,6 +74,10 @@ Copy `.env.example` to `.env`:
 |----------|---------|
 | `OPENAI_API_KEY` | Optional — LLM-assisted summaries |
 | `OPENAI_MODEL` | Optional — defaults to `gpt-4o-mini` |
+| `BRIEF_DATABASE` | Optional — `sqlite` (default) or `supabase` |
+| `SUPABASE_URL` | Supabase project URL when using `supabase` backend |
+| `SUPABASE_SERVICE_ROLE_KEY` | Service-role key for server-side writes (not the anon key) |
+| `SUPABASE_KEY` | Fallback for service-role key only — must not be the public anon key |
 
 ## Placeholder content
 
