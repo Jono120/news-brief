@@ -24,16 +24,16 @@ def sqlite_repo(tmp_path, monkeypatch):
 
 
 def make_story(**overrides) -> Story:
-    defaults = dict(
-        id=None,
-        url="https://example.com/story",
-        title="Singapore fintech raises Series B",
-        source_name="Test Source",
-        published_at="2026-07-10T00:00:00+00:00",
-        excerpt="A Singapore-based payments startup raised new funding.",
-        category="fintech",
-        apac_score=0.8,
-        status=StoryStatus.CANDIDATE,
-    )
+    defaults = {
+        "id": None,
+        "url": "https://example.com/story",
+        "title": "Singapore fintech raises Series B",
+        "source_name": "Test Source",
+        "published_at": "2026-07-10T00:00:00+00:00",
+        "excerpt": "A Singapore-based payments startup raised new funding.",
+        "category": "fintech",
+        "apac_score": 0.8,
+        "status": StoryStatus.CANDIDATE,
+    }
     defaults.update(overrides)
     return Story(**defaults)

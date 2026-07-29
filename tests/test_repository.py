@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from brief.entities import StoryStatus
 from brief.models import count_stories, get_story, list_stories, update_story, upsert_story
-
 from tests.conftest import make_story
 
 

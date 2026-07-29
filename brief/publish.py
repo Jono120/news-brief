@@ -1,14 +1,31 @@
 from __future__ import annotations
 
-from datetime import date
+from datetime import datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from brief.issues import is_valid_issue_date, issue_to_dict, published_issue_dir
-from brief.models import Issue, OUTPUT_DIR, Story, StoryStatus, dump_json, get_story, load_edition_config, list_stories, update_story
+from brief.models import (
+    OUTPUT_DIR,
+    Issue,
+    Story,
+    StoryStatus,
+    dump_json,
+    get_story,
+    list_stories,
+    load_edition_config,
+    update_story,
+)
 
 TEMPLATE_DIR = Path(__file__).resolve().parent / "templates"
+
+
+def default_issue_date() -> str:
+    edition = load_edition_config()["edition"]
+    tz = ZoneInfo(edition.get("timezone", "Pacific/Auckland"))
+    return datetime.now(tz).date().isoformat()
 
 
 def jinja_env() -> Environment:
@@ -69,7 +86,7 @@ def render_issue(issue: Issue) -> dict[str, str]:
 
 def publish_issue(issue_date: str | None = None) -> Path:
     edition = load_edition_config()["edition"]
-    target_date = issue_date or date.today().isoformat()
+    target_date = issue_date or default_issue_date()
     if not is_valid_issue_date(target_date):
         raise ValueError(f"Issue date must be YYYY-MM-DD, got {target_date!r}")
     approved = [story for story in list_stories(StoryStatus.APPROVED, limit=50) if not story.issue_date]

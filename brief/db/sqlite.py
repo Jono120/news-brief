@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import sqlite3
+from collections.abc import Iterator
 from contextlib import closing, contextmanager
-from typing import Any, Iterator
+from typing import Any
 
 from brief.entities import Story, StoryStatus, story_from_row, utc_now
 from brief.paths import DATA_DIR, DB_PATH
@@ -20,9 +21,8 @@ class SqliteRepository:
         # retries instead of raising "database is locked" immediately.
         conn.execute("PRAGMA journal_mode = WAL")
         conn.execute("PRAGMA busy_timeout = 5000")
-        with closing(conn):
-            with conn:
-                yield conn
+        with closing(conn), conn:
+            yield conn
 
     def init(self) -> None:
         with self.connect() as conn:

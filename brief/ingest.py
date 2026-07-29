@@ -11,7 +11,14 @@ from urllib.parse import urlparse
 import feedparser
 import httpx
 
-from brief.models import Story, StoryStatus, load_edition_config, load_sources_config, upsert_story, utc_now
+from brief.models import (
+    Story,
+    StoryStatus,
+    load_edition_config,
+    load_sources_config,
+    upsert_story,
+    utc_now,
+)
 from brief.server import HTTPS_CLIENT_DEFAULTS, require_https_url
 
 logger = logging.getLogger(__name__)

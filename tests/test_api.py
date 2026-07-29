@@ -6,7 +6,6 @@ from fastapi.testclient import TestClient
 from brief.api_server import create_api_app
 from brief.entities import StoryStatus
 from brief.models import get_story, upsert_story
-
 from tests.conftest import make_story
 
 

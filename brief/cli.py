@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import logging
 import os
-from datetime import date
-from typing import Callable
+from collections.abc import Callable
 
 import typer
 from rich.console import Console
@@ -13,7 +12,7 @@ from brief.draft import draft_candidates
 from brief.feeds import check_all_sources, print_feed_check_table
 from brief.ingest import ingest_sources
 from brief.models import StoryStatus, count_stories, init_db, list_stories, load_edition_config
-from brief.publish import publish_issue
+from brief.publish import default_issue_date, publish_issue
 from brief.server import is_loopback_host, resolve_tls_material, run_uvicorn, service_url
 
 app = typer.Typer(help="Brief APAC MVP workflow CLI", no_args_is_help=True)
@@ -162,7 +161,7 @@ def publish(
 ) -> None:
     """Publish approved stories to markdown, HTML, email, and RSS outputs."""
     init_db()
-    target = issue_date or date.today().isoformat()
+    target = issue_date or default_issue_date()
     try:
         issue_dir = publish_issue(target)
     except ValueError as exc:

@@ -7,7 +7,7 @@ import re
 
 import httpx
 
-from brief.models import Story, StoryStatus, load_edition_config, list_stories, update_story
+from brief.models import Story, StoryStatus, list_stories, load_edition_config, update_story
 from brief.server import HTTPS_CLIENT_DEFAULTS
 
 logger = logging.getLogger(__name__)

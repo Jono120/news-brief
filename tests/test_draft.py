@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from brief.draft import apac_why_line, draft_story, extractive_summary, first_sentences
 from brief.entities import StoryStatus
-
 from tests.conftest import make_story
 
 
